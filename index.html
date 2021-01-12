@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>React Sports Game</title>
+    <link rel="stylesheet" href="./Assets/Stylesheet/index.css"
 </head>
 <body>
     <!-- include an element for ReactDOM to attach our React-generated elements to -->
@@ -16,20 +17,146 @@
     <!-- include Babel standalone so we can process JSX in React.createElement stuff -->
     <script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
-    <!-- include our JS+JSX for the React Appliccation -->
+    <!-- include our JS+JSX for the React Application -->
+
 <script type="text/babel">
 
 // An App component under which all other components will be added
-function App (props) {
-  return (
-    <div>
-      <h1>Welcome to the Sports Game starter!</h1>
-      <em>This file represents the way your code should look after completing the <strong>Setup</strong> steps in the instructions.</em>
+class  Team extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state={
+      shots:0,
+      score:0
+    }
+    this.shotSound = new Audio('./Assets/Stylesheet/Boom_Chuk2_130.wav')
+    this.scoreSound= new Audio('./Assets/Stylesheet/Burp+Long.wav')   
+  }
+
+  shotHandler = () => {
+    let score= this.state.score
+    this.shotSound.play()
+
+    if (Math.random() > 0.5){
+      score +=1
+      setTimeout(()=>{
+        this.scoreSound.play() 
+      },  120)
+      
+
+    }
+    this.setState((state,props)=>({
+      shots: state.shots + 1,
+      score
+    }))
+  }
+  render(){
+    let shotPercentageDiv
+    
+    if(this.state.shots) {
+       const shotPercentage = Math.round ((this.state.score / this.state.shots)*100 )
+        shotPercentageDiv= (
+
+        <div>
+
+          <strong>Shooting %:{shotPercentage}</strong> 
+
+          </div>
+
+      )
+
+    }
+    
+
+    return (
+      <div className="Team">
+        <h2>{this.props.name}</h2>
+        <div className="identity">
+        <img src={this.props.logo} alt={this.props.name}/>
+        </div>
+
+        <div>
+          <strong>Shots:</strong> {this.state.shots}
+        </div>
+
+        <div>
+          <strong>Score:</strong> {this.state.score}
+        </div>
+
+          {shotPercentageDiv} 
+
+      
+
+        <button onClick={this.shotHandler}>Shoot!</button>
     </div>
+
+    )
+  }
+}
+function Game(props){
+  return (
+ <div className="Game">
+ <h1>Welcome to {props.venue}</h1>
+ <div className= 'stats'>
+      <Team 
+      name={props.visitingTeam.name}
+      logo={props.visitingTeam.logoSrc}
+       />
+
+       <div className='versus'>
+
+        <h1>VS</h1>
+
+        </div>
+
+     <Team
+     name= {props.homeTeam.name}
+      logo={props.homeTeam.logoSrc} 
+      />
+    </div>
+  </div>
+
+
   )
+
 }
 
+function App (props) {
+  const chelsea={
+    name: 'Chelsea',
+    logoSrc: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmWmomjJuQtF6bKy6UC6phaZrLN49Zz5aXLw&usqp=CAU "
+  }
+  const liverpool={
+    name:'Liverpool',
+    logoSrc:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTr7OnQPq2P5ZUczM3GdljfpdwXpEunGsqHjQ&usqp=CAU" 
+  }
 
+  const manchesterutd={
+    name: 'ManchesterUnited',
+    logoSrc:'https://seeklogo.com/images/M/manchester-united-logo-F14DA1FCCD-seeklogo.com.png'
+  }
+
+  const cbf={
+    name: 'CBFBrasil',
+    logoSrc:'https://seeklogo.com/images/C/CBF_Confederacao_Brasileira_de_Futebol-logo-82C966FA8B-seeklogo.com.png'
+  }
+
+  return (
+    <div className="App">
+      <Game
+       venue = "Football 2021 Gem" 
+       homeTeam={chelsea}
+       visitingTeam={liverpool}
+       />
+      <Game
+       venue = "Arena"
+       homeTeam={manchesterutd}
+       visitingTeam={cbf}
+       />
+      
+  </div>
+  )
+}
 
 // Render the App
 ReactDOM.render(
